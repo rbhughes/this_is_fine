@@ -1,0 +1,24 @@
+[project]
+name = "this-is-fine"
+version = "0.1.0"
+description = "fire risk monitor"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.4.1",
+    "flask>=3.1.2",
+    "flask-cors>=6.0.1",
+    "geopandas>=1.1.1",
+    "httpx>=0.28.1",
+    "pandas>=2.3.3",
+    "prefect>=3.4.23",
+    "pyproj>=3.7.2",
+    "python-dotenv>=1.1.1",
+    "shapely>=2.1.2",
+]
+
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "pytest>=8.4.2",
+]
