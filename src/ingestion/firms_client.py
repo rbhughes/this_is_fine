@@ -46,6 +46,16 @@ class FIRMSClient:
         if df.empty:
             return gpd.GeoDataFrame()
 
+        # Check if response has expected columns (API might return error message as text)
+        required_cols = ["latitude", "longitude"]
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            raise ValueError(
+                f"FIRMS API response missing expected columns: {missing_cols}. "
+                f"Got columns: {list(df.columns)}. "
+                f"Response text: {response.text[:200]}"
+            )
+
         # Convert to GeoDataFrame
         geometry = [Point(xy) for xy in zip(df.longitude, df.latitude)]
         gdf = gpd.GeoDataFrame(df, geometry=geometry, crs="EPSG:4326")
