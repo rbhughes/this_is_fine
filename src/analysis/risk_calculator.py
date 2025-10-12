@@ -32,8 +32,16 @@ class FireRiskCalculator:
         df["brightness_norm"] = (df["bright_ti4"] - 300) / 100
         df["brightness_norm"] = df["brightness_norm"].clip(0, 1)
 
-        # Normalize confidence (0-100)
-        df["confidence_norm"] = df["confidence"] / 100
+        # Normalize confidence
+        # VIIRS uses categorical: 'l' (low), 'n' (nominal), 'h' (high)
+        # MODIS uses numeric: 0-100
+        if df["confidence"].dtype == "object":
+            # Categorical confidence (VIIRS)
+            confidence_map = {"l": 0.33, "n": 0.66, "h": 1.0}
+            df["confidence_norm"] = df["confidence"].map(confidence_map)
+        else:
+            # Numeric confidence (MODIS)
+            df["confidence_norm"] = df["confidence"] / 100
 
         # Normalize FRP (Fire Radiative Power, 0-500+ MW)
         df["frp_norm"] = (df["frp"] / 500).clip(0, 1)
@@ -57,7 +65,7 @@ class FireRiskCalculator:
         return df
 
     def create_risk_buffers(
-        self, fires_gdf: gpd.GeoDataFrame, buffer_km: float = 10
+        self, fires_gdf: gpd.GeoDataFrame, buffer_km: float = 10, dissolve: bool = False
     ) -> gpd.GeoDataFrame:
         """
         Create buffer zones around fires.
@@ -65,6 +73,7 @@ class FireRiskCalculator:
         Args:
             fires_gdf: GeoDataFrame with fires
             buffer_km: Buffer radius in kilometers
+            dissolve: If True, merge overlapping buffers by risk_category
 
         Returns:
             GeoDataFrame with buffer polygons
@@ -75,6 +84,17 @@ class FireRiskCalculator:
 
         # Create buffers (convert km to meters)
         fires_proj["geometry"] = fires_proj.geometry.buffer(buffer_km * 1000)
+
+        # Dissolve overlapping buffers by risk category if requested
+        if dissolve and "risk_category" in fires_proj.columns:
+            # Group by risk category and merge overlapping polygons
+            dissolved = fires_proj.dissolve(by="risk_category", aggfunc="first")
+
+            # Reset index to make risk_category a column again
+            dissolved = dissolved.reset_index()
+
+            # Convert back to WGS84 for display
+            return dissolved.to_crs("EPSG:4326")
 
         # Convert back to WGS84 for display
         return fires_proj.to_crs("EPSG:4326")
