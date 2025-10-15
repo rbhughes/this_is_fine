@@ -4,9 +4,11 @@ import os
 from dotenv import load_dotenv
 from src.ingestion.firms_client import FIRMSClient
 
-load_dotenv()
+_ = load_dotenv()
 
 api_key = os.getenv("FIRMS_API_KEY")
+if api_key is None:
+    raise ValueError("FIRMS_API_KEY environment variable is not set")
 client = FIRMSClient(api_key)
 
 # Define regions to check (west, south, east, north)

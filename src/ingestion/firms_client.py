@@ -18,7 +18,7 @@ class FIRMSClient:
 
     def get_active_fires(
         self,
-        bbox: tuple,  # (west, south, east, north)
+        bbox: tuple[float, float, float, float],  # (west, south, east, north)
         days: int = 1,
         source: str = "VIIRS_NOAA20_NRT",  # or MODIS_NRT
     ) -> gpd.GeoDataFrame:

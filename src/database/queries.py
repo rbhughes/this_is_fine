@@ -20,6 +20,17 @@ def get_fire_statistics(conn: duckdb.DuckDBPyConnection) -> Dict[str, Any]:
         FROM fires
     """).fetchone()
 
+    if result is None:
+        return {
+            "total_fires": 0,
+            "days_with_fires": 0,
+            "avg_risk_score": 0.0,
+            "max_risk_score": 0.0,
+            "high_risk_count": 0,
+            "moderate_risk_count": 0,
+            "low_risk_count": 0,
+        }
+
     return {
         "total_fires": result[0],
         "days_with_fires": result[1],

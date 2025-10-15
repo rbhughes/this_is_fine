@@ -167,7 +167,7 @@ def get_fires_by_date(
     # Convert to GeoDataFrame
     from shapely import wkt
 
-    result["geometry"] = result["geometry"].apply(wkt.loads)
+    result["geometry"] = result["geometry"].apply(wkt.loads)  # pyright: ignore
     return gpd.GeoDataFrame(result, geometry="geometry", crs="EPSG:4326")
 
 
@@ -213,5 +213,5 @@ def get_fires_in_bbox(
 
     from shapely import wkt
 
-    result["geometry"] = result["geometry"].apply(wkt.loads)
+    result["geometry"] = result["geometry"].apply(wkt.loads)  # pyright: ignore
     return gpd.GeoDataFrame(result, geometry="geometry", crs="EPSG:4326")
