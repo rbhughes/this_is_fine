@@ -6,7 +6,7 @@ import httpx
 import pandas as pd
 from io import StringIO
 
-load_dotenv()
+_ = load_dotenv()
 
 api_key = os.getenv("FIRMS_API_KEY")
 bbox = (-125, 24, -66, 49)  # Continental US

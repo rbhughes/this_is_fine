@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from src.ingestion.firms_client import FIRMSClient
 
-load_dotenv()
+_ = load_dotenv()
 
 api_key = os.getenv("FIRMS_API_KEY")
 

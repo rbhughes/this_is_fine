@@ -213,4 +213,4 @@ data/*.duckdb
 data/*.duckdb.wal
 data/processed/*.geojson
 data/raw/*
-data/static/*
+# Note: data/static/persistent_anomalies.* are reference data, can be committed if desired
