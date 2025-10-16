@@ -1,10 +1,10 @@
 # 🔥 this-is-fine: AI-Powered Wildfire Risk Monitoring
 
-> Real-time wildfire detection and risk assessment using NASA satellite data, NOAA weather integration and live particulate data from the EPA and PurpleAir network.
+> Wildfire detection and risk assessment integrating NASA FIRMS satellite thermal anomalies (VIIRS/MODIS), NOAA fire weather indices, EPA AirNow air quality data, and PurpleAir real-time PM2.5 sensors
 
 ---
 
-_This was mostly a "vibe-coding" excercise to try out Claude Code integration with Zed, and it worked remarkably well. The local LLM, qwen2.5:145b works okay--expect confusion if it tries to invoke too many tools in mcp_server at once._
+_This was mostly a "vibe-coding" excercise to try out Claude Code integration with Zed, and it worked remarkably well. The local LLM, qwen2.5:145b is adequate--expect confusion if it tries to invoke too many tools in mcp_server at once._
 
 ---
 
