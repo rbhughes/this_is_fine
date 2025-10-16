@@ -103,30 +103,56 @@ class AirNowClient:
             "API_KEY": self.api_key,
         }
 
-        try:
-            response = httpx.get(url, params=params, timeout=10.0)
-            response.raise_for_status()
+        # Retry logic for rate limiting
+        max_retries = 3
+        retry_delay = 2.0  # Start with 2 seconds
 
-            data = response.json()
+        for attempt in range(max_retries):
+            try:
+                response = httpx.get(url, params=params, timeout=10.0)
+                response.raise_for_status()
 
-            # API returns a list of observations (one per parameter)
-            # Return the first observation if available
-            result = data[0] if isinstance(data, list) and len(data) > 0 else None
+                data = response.json()
 
-            # Cache the result
-            self._cache[cache_key] = (datetime.now(), result)
+                # API returns a list of observations (one per parameter)
+                # Return the first observation if available
+                result = data[0] if isinstance(data, list) and len(data) > 0 else None
 
-            return result
+                # Cache the result
+                self._cache[cache_key] = (datetime.now(), result)
 
-        except httpx.HTTPError as e:
-            print(f"Error fetching AirNow data for ({latitude}, {longitude}): {e}")
-            return None
+                return result
+
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429:  # Rate limit exceeded
+                    if attempt < max_retries - 1:
+                        wait_time = retry_delay * (2**attempt)  # Exponential backoff
+                        print(
+                            f"Rate limited (429). Waiting {wait_time:.1f}s before retry {attempt + 1}/{max_retries}..."
+                        )
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        print(
+                            f"Rate limit exceeded after {max_retries} retries for ({latitude}, {longitude})"
+                        )
+                        return None
+                else:
+                    print(
+                        f"HTTP error fetching AirNow data for ({latitude}, {longitude}): {e}"
+                    )
+                    return None
+            except httpx.HTTPError as e:
+                print(f"Error fetching AirNow data for ({latitude}, {longitude}): {e}")
+                return None
+
+        return None
 
     def enrich_fires_with_aqi(
         self,
         fires_gdf: gpd.GeoDataFrame,
         distance: int = 25,
-        delay_seconds: float = 0.1,
+        delay_seconds: float = 0.5,
     ) -> gpd.GeoDataFrame:
         """
         Enrich fire data with current AQI from nearby air quality monitors.
@@ -134,7 +160,7 @@ class AirNowClient:
         Args:
             fires_gdf: GeoDataFrame with fire detections (must have latitude, longitude)
             distance: Search radius in miles for nearby monitors (default 25)
-            delay_seconds: Delay between API calls to respect rate limits (default 0.1)
+            delay_seconds: Delay between API calls to respect rate limits (default 0.5)
 
         Returns:
             GeoDataFrame with added AQI columns:
@@ -155,7 +181,13 @@ class AirNowClient:
         fires_enriched["aqi_category_number"] = None
 
         total_fires = len(fires_enriched)
-        print(f"Enriching {total_fires} fires with AirNow AQI data...")
+        import sys
+
+        print(
+            f"Enriching {total_fires} fires with AirNow AQI data...",
+            file=sys.stderr,
+            flush=True,
+        )
 
         for idx, row in fires_enriched.iterrows():
             lat = row["latitude"]
@@ -184,12 +216,20 @@ class AirNowClient:
                 time.sleep(delay_seconds)
 
             # Progress indicator
-            if (idx + 1) % 10 == 0:
-                print(f"  Processed {idx + 1}/{total_fires} fires...")
+            if (idx + 1) % 10 == 0 or (idx + 1) == 1 or (idx + 1) == total_fires:
+                print(
+                    f"  [{idx + 1}/{total_fires}] Processing AQI data...",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
         # Count how many fires got AQI data
         aqi_count = fires_enriched["aqi"].notna().sum()
-        print(f"✓ Added AQI data to {aqi_count}/{total_fires} fires")
+        print(
+            f"✓ Added AQI data to {aqi_count}/{total_fires} fires",
+            file=sys.stderr,
+            flush=True,
+        )
 
         return fires_enriched
 

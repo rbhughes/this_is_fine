@@ -194,7 +194,18 @@ class NOAAWeatherClient:
 
         # Fetch weather for each fire location
         # Note: This can be slow for many fires - consider batching/caching
-        for idx, row in fires_gdf.iterrows():
+        import sys
+
+        total_fires = len(fires_gdf)
+        for i, (idx, row) in enumerate(fires_gdf.iterrows(), 1):
+            # Progress logging every 10 fires
+            if i % 10 == 0 or i == 1 or i == total_fires:
+                print(
+                    f"   [{i}/{total_fires}] Fetching weather data...",
+                    file=sys.stderr,
+                    flush=True,
+                )
+
             weather = self.get_fire_weather_for_point(row["latitude"], row["longitude"])
 
             if weather:

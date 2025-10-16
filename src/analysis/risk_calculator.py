@@ -122,23 +122,23 @@ class FireRiskCalculator:
         # Normalize weather data
         # Humidity: Lower is worse (invert so 0% humidity = 1.0 risk)
         df["humidity_norm"] = (
-            1 - (df["relative_humidity"].fillna(50).astype(float) / 100)
+            1 - (df["relative_humidity"].fillna(50.0).astype(float) / 100)
         ).clip(lower=0.0, upper=1.0)
 
         # Wind: Higher is worse (normalize to 0-60 km/h range)
-        df["wind_norm"] = (df["wind_speed_kmh"].fillna(0).astype(float) / 60).clip(
+        df["wind_norm"] = (df["wind_speed_kmh"].fillna(0.0).astype(float) / 60).clip(
             lower=0.0, upper=1.0
         )
 
         # Precipitation: Lower probability is worse (invert)
         df["precip_norm"] = (
-            1 - (df["precip_probability"].fillna(0).astype(float) / 100)
+            1 - (df["precip_probability"].fillna(0.0).astype(float) / 100)
         ).clip(lower=0.0, upper=1.0)
 
         # Fire danger index: Normalize if available (0-100 scale)
         if "fire_danger_index" in df.columns:
             df["fire_danger_norm"] = (
-                df["fire_danger_index"].fillna(0).astype(float) / 100
+                df["fire_danger_index"].fillna(0.0).astype(float) / 100
             ).clip(lower=0.0, upper=1.0)
         else:
             df["fire_danger_norm"] = 0.5  # Neutral value if unavailable

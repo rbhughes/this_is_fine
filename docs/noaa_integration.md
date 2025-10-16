@@ -2,13 +2,14 @@
 
 ## Overview
 
-The wildfire risk monitoring system now incorporates real-time weather data from NOAA's National Weather Service (NWS) API to enhance fire risk assessments. This integration follows a three-tier approach:
+The wildfire risk monitoring system incorporates real-time weather data from NOAA's National Weather Service (NWS) API to enhance fire risk assessments.
 
-- **Tier 1: NOAA NWS API (Real-time)** ✅ **IMPLEMENTED**
-- **Tier 2: Enhanced Risk Model with GHCN-Daily (Recent History)** 🔜 Future
-- **Tier 3: Advanced Analysis (Multi-day forecasts + Historical patterns)** 🔜 Future
+**Current Implementation:**
+- **Tier 1:** NOAA NWS API (Real-time) - Implemented
+- **Tier 2:** Enhanced Risk Model with GHCN-Daily (Recent History) - Future enhancement
+- **Tier 3:** Advanced Analysis (Multi-day forecasts + Historical patterns) - Future enhancement
 
-## Tier 1: Real-time Weather Integration
+## Real-time Weather Integration
 
 ### What's Implemented
 

@@ -1,5 +1,7 @@
 # Kepler.gl Visualization Guide
 
+> **Note:** This guide is for using the standalone Kepler.gl web application (https://kepler.gl/demo) to visualize exported GeoJSON files. For the integrated Gradio web interface with Plotly maps, see `docs/gradio_web_interface.md` and `docs/quick_start_web_interface.md`.
+
 ## Quick Start
 
 ### 1. Load Data into Kepler.gl
@@ -12,7 +14,7 @@
    - `data/processed/fire_buffers.geojson`
 4. Kepler.gl will automatically create layers for each dataset
 
-**Note:** The `kepler_config.json` file is provided as a reference for manual styling. In the current Kepler.gl interface, you'll need to manually configure the styling using the layer panels (see Manual Configuration section below).
+**Note:** Manual configuration is required - you'll need to configure the styling using the layer panels (see Manual Configuration section below). The `kepler_config.json` file in the project root is a saved configuration example, but may need adjustments for your specific data.
 
 ---
 

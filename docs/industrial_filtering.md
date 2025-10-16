@@ -37,10 +37,13 @@ The filtering uses a **grid-based temporal persistence approach** inspired by NA
 
 ```python
 lookback_days=30           # Analyze 30 days of history
-detection_threshold=5      # 5+ detections = persistent
+detection_threshold=2      # 2+ detections = persistent (default in ETL)
+                          # Class default: 5+ detections
 grid_size_km=0.4          # 400m grid cells
-buffer_km=0.5             # 500m exclusion radius
+buffer_km=1.0             # 1km exclusion radius (default in ETL)
 ```
+
+**Note:** The ETL flow uses `detection_threshold=2` and `buffer_km=1.0` by default to work better with limited historical data and account for GPS drift in satellite detections.
 
 ---
 
