@@ -205,7 +205,13 @@ class PurpleAirClient:
         fires_enriched["pa_avg_distance_km"] = None
 
         total_fires = len(fires_enriched)
-        print(f"Enriching {total_fires} fires with PurpleAir sensor data...")
+        import sys
+
+        print(
+            f"Enriching {total_fires} fires with PurpleAir sensor data...",
+            file=sys.stderr,
+            flush=True,
+        )
 
         for idx, row in fires_enriched.iterrows():
             lat = row["latitude"]
@@ -259,12 +265,20 @@ class PurpleAirClient:
                 time.sleep(delay_seconds)
 
             # Progress indicator
-            if (idx + 1) % 10 == 0:
-                print(f"  Processed {idx + 1}/{total_fires} fires...")
+            if (idx + 1) % 10 == 0 or (idx + 1) == 1 or (idx + 1) == total_fires:
+                print(
+                    f"  [{idx + 1}/{total_fires}] Processing PurpleAir data...",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
         # Count how many fires got PurpleAir data
         pa_count = fires_enriched["pa_pm25"].notna().sum()
-        print(f"✓ Added PurpleAir data to {pa_count}/{total_fires} fires")
+        print(
+            f"✓ Added PurpleAir data to {pa_count}/{total_fires} fires",
+            file=sys.stderr,
+            flush=True,
+        )
 
         return fires_enriched
 

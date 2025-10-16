@@ -12,8 +12,9 @@ data/
 ├── processed/                       # Dynamic output (generated per ETL run)
 │   ├── active_fires.geojson        # Current fire detections (filtered)
 │   ├── fire_buffers.geojson        # Risk buffer zones (dissolved by risk_category)
-│   └── excluded_industrial_fires.geojson  # Fires filtered out (if running analysis script)
-├── raw/                            # Raw API responses (if caching enabled)
+│   ├── excluded_industrial_fires.geojson  # Fires filtered out (if running analysis script)
+│   ├── fires_*.html                # Plotly visualizations (generated on demand)
+│   └── region_metadata.json        # Metadata about current dataset
 ├── wildfire.duckdb                 # Main database (all historical data)
 └── wildfire.duckdb.wal             # Write-Ahead Log (transaction safety)
 ```
@@ -85,6 +86,18 @@ Contains outputs from each ETL run - dynamically generated and overwritten with 
 - **Purpose:** Fire detections that were filtered out as industrial sources
 - **Generation:** Only when running `scripts/analyze_industrial_sources.py`
 - **Use case:** Manual review to verify filtering accuracy
+
+#### `fires_*.html`
+- **Type:** HTML files with embedded Plotly visualizations
+- **Purpose:** Interactive maps for fire visualization (basic, risk heatmap, AQI, PurpleAir)
+- **Generation:** Created by `visualize_fires` tool or Gradio interface
+- **Use case:** View maps in any web browser
+
+#### `region_metadata.json`
+- **Type:** JSON metadata file
+- **Purpose:** Stores information about the current dataset (bbox, fire count, buffer count)
+- **Generation:** Created by ETL flow on each run
+- **Use case:** Track what region was last processed
 
 ---
 

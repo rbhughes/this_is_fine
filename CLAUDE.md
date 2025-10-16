@@ -22,14 +22,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - GeoPandas/Shapely for spatial operations
 - Prefect for ETL orchestration
 - Flask/Flask-CORS for REST API
-- Kepler.gl for interactive geospatial visualization
-- MCP (Model Context Protocol) server for integration
+- Kepler.gl and Plotly+MapLibre for interactive geospatial visualization
+- MCP (Model Context Protocol) server for tool integration
+- Gradio web UI with local LLM (Qwen2.5:14b via Ollama)
 
 **Key features:**
 - Industrial heat source filtering (steel plants, refineries, etc.)
 - Optional NOAA weather data enrichment for enhanced risk scoring
+- Optional air quality enrichment (EPA AirNow + PurpleAir sensors)
 - Dissolved buffer zones grouped by risk category
 - Real-time fire detection with ~24hr FIRMS API lag
+- Natural language interface via local LLM (no API keys required)
 
 ## Development Commands
 
@@ -86,13 +89,20 @@ uv run python -m flows.etl_flow
 uv run python -c "from flows.etl_flow import wildfire_etl_flow; wildfire_etl_flow(days_back=2, use_weather=False)"
 ```
 
+**Web Interface (New!):**
+```bash
+# Launch Gradio web UI with LLM chat interface
+uv run python web/gradio_app.py
+# Access at http://localhost:7860
+```
+
 **Other Services:**
 ```bash
 # Start Flask API server
 uv run api/app.py
 
-# Start MCP server
-uv run mcp_server/server.py
+# Start MCP server (stdio mode)
+uv run python mcp_server/server.py
 ```
 
 ### Visualization
@@ -241,7 +251,45 @@ wildfire_etl_flow(bbox=(-124.8, 41.9, -111.0, 49.0))
 
 See `docs/bounding_boxes.md` for common regions and how to find your own.
 
-## Visualization
+## Web Interface (Gradio + LLM)
+
+**NEW:** Natural language interface powered by local LLM (Qwen2.5:14b).
+
+**Quick Start:**
+```bash
+# 1. Install Ollama: https://ollama.ai
+# 2. Pull the model
+ollama pull qwen2.5:14b
+
+# 3. Launch the web interface
+uv run python web/gradio_app.py
+# Access at http://localhost:7860
+```
+
+**Features:**
+- 💬 **Natural language chat** - Ask questions or give commands in plain English
+- 🗺️ **Real-time maps** - Interactive Plotly visualizations updated automatically
+- 🤖 **Local LLM** - No API keys, runs entirely on your Mac (24GB RAM recommended)
+- 🔧 **Full MCP access** - All tools available via conversation
+
+**Example Interactions:**
+```
+You: "Fetch fires in California from the last 2 days"
+Assistant: [Executes fetch_fires] "Found 150 fires (23 industrial filtered)"
+
+You: "Add PurpleAir air quality data"
+Assistant: [Executes enrich_purpleair] "Added PM2.5 to 87/150 fires"
+
+You: "Show me a PM2.5 heatmap"
+[Map switches to PurpleAir density visualization]
+```
+
+**LLM Requirements:**
+- **Recommended**: Qwen2.5:14b (~10-12GB RAM, good quality)
+- **Alternatives**: llama3.2:11b, qwen2.5:7b, mistral:7b
+- **Hardware**: M1/M2/M3 MacBook Air with 24GB RAM is perfect
+
+See `docs/gradio_web_interface.md` for detailed documentation.
 
 ## Visualization Options
 
