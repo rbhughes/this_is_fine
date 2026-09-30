@@ -4,7 +4,7 @@
 
 ---
 
-_This was mostly a "vibe-coding" excercise to try out Claude Code integration with Zed, and it worked remarkably well. The local LLM, qwen2.5:145b is adequate--expect confusion if it tries to invoke too many tools in mcp_server at once._
+_This was mostly a "vibe-coding" exercise to try out Claude Code integration with Zed, and it worked remarkably well. The local LLM, qwen2.5:14b is adequate--expect confusion if it tries to invoke too many tools in mcp_server at once._
 
 ---
 
