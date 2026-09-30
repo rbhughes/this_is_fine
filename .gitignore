@@ -212,5 +212,12 @@ scribble.txt
 data/*.duckdb
 data/*.duckdb.wal
 data/processed/*.geojson
+data/processed/*.json
 data/raw/*
 # Note: data/static/persistent_anomalies.* are reference data, can be committed if desired
+
+# macOS
+.DS_Store
+
+# Generated Plotly exports
+wildfire_plotly_*.html
